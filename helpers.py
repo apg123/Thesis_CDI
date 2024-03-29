@@ -151,6 +151,7 @@ def process_images(model, preprocess, image_locations, device = 'cuda', batch_si
             images = torch.cat([preprocess(Image.open(img)).unsqueeze(0)for img in image_locations[i:i+batch_size]]).to(device)
         except:
             print("Error with images, preprossing each image individually")
+            print("Error with image", img)
             good_images = []
             for img in image_locations[i:i+batch_size]:
                 try:
@@ -159,7 +160,6 @@ def process_images(model, preprocess, image_locations, device = 'cuda', batch_si
                     print("Error with image", img)
                     continue
             images = torch.cat(good_images).to(device)
-            continue
         with torch.no_grad():
             features = model.encode_image(images)
             all_features.append(features.cpu().numpy())
