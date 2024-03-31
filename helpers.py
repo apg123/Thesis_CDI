@@ -9,6 +9,7 @@ import clip
 import math
 from tqdm import tqdm
 from PIL import Image
+import matplotlib.pyplot as plt
 
 
 class ZeroShotClassifier(BaseEstimator, ClassifierMixin):
@@ -287,5 +288,35 @@ def intersections_for_pbm(pairs, unknown, postfix):
     for prod in itertools.product(*pairs):
         all.append("a " + " ".join(prod) + postfix)
     return all
+
+def plot_across_tol(df, k, method_names, axis1, axis2, xlabel=None, ylabel=None, title=None, reverse_x = False):
+    relevant_k = df[df['k'] == k]
+
+    for method in method_names:
+        data_for_method = relevant_k[relevant_k['name'] == method]
+        d1 = data_for_method[axis1]
+        d2 = data_for_method[axis2]
+
+        if method in ["Baseline", "DebiasClip"]:
+            plt.scatter(d1, d2, label=method)
+        else:
+            plt.plot(d1, d2, label=method)
+    plt.legend()
+    if xlabel is not None:
+        plt.xlabel(xlabel)
+    else:
+        plt.xlabel(axis1)
+    if ylabel is not None:
+        plt.ylabel(ylabel)
+    else:
+        plt.ylabel(axis2)
+    if title is not None:
+        plt.title(title)
+    else:
+        plt.title(f"Graph of {axis2} over {axis1}")
+    if reverse_x:
+        plt.gca().invert_xaxis()
+    plt.grid()
+    plt.show()
     
     
