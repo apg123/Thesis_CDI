@@ -227,6 +227,7 @@ class ImageDatabase():
         return self
 
     def pbm(self, query, k=10, eps=0, **kwargs):
+        ## As defined in the paper "Mitigating Test-Time Bias for Fair Image Retrieval" (Kong et. al. 2023)
         query_features = self._process_query(query)
         similarities = (self.features @ query_features.T).flatten()
         best = similarities.argsort(descending=True).cpu().numpy().flatten()
@@ -289,6 +290,7 @@ class ImageDatabase():
         return self
     
     def clip_clip(self, query, ordering, n_to_clip, k=10, **kwargs):
+        # As defined in the paper "Are Gender-Neutral Queries Really Gender-Neutral? Mitigating Gender Bias in Image Search" (Wang et. al. 2021)
         query_features = self._process_query(query)
         clip_ordering = self.clipclip_orderings[ordering]
         clip_features = torch.index_select(self.features, 1, torch.tensor(clip_ordering[n_to_clip:]).to(self.device))
